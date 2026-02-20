@@ -21,21 +21,3 @@ fetch('manifest.json')
 // ── Installed check ──
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone
 setStatus('installed', isStandalone ? 'ok' : 'warn', isStandalone ? '已安裝 ✓' : '瀏覽器中')
-
-// ── PWA Install prompt ──
-let deferredPrompt
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault()
-  deferredPrompt = e
-  document.getElementById('install-banner').style.display = 'block'
-})
-
-document.getElementById('install-btn').addEventListener('click', async () => {
-  if (!deferredPrompt) return
-  deferredPrompt.prompt()
-  const { outcome } = await deferredPrompt.userChoice
-  deferredPrompt = null
-  document.getElementById('install-banner').style.display = 'none'
-  if (outcome === 'accepted') setStatus('installed', 'ok', '已安裝 ✓')
-})
