@@ -1,17 +1,9 @@
 import Dexie from 'dexie'
+import { setStatus, escHtml } from './utils.js'
 
 // 與原生 IndexedDB 卡片共用同一個資料庫 pwa-test-db / notes
-const db = new Dexie('pwa-test-db')
+const db = new Dexie('pwa-test-db-dexie')
 db.version(1).stores({ notes: '++id, createdAt' })
-
-function setStatus(state, value) {
-  document.getElementById('dot-dex').className = `dot ${state}`
-  document.getElementById('val-dex').textContent = value
-}
-
-function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-}
 
 let editingId = null
 
@@ -38,6 +30,14 @@ async function renderList() {
   `).join('')
 }
 
+function cancelEdit() {
+  editingId = null
+  document.getElementById('dex-title').value = ''
+  document.getElementById('dex-content').value = ''
+  document.getElementById('dex-save-btn').textContent = '＋ 新增'
+  document.getElementById('dex-cancel-btn').style.display = 'none'
+}
+
 window.dexStartEdit = async (id) => {
   const r = await db.notes.get(id)
   if (!r) return
@@ -52,16 +52,10 @@ window.dexStartEdit = async (id) => {
 window.dexDelete = async (id) => {
   await db.notes.delete(id)
   await renderList()
-  setStatus('ok', `刪除 #${id}`)
+  setStatus('dex', 'ok', `刪除 #${id}`)
 }
 
-document.getElementById('dex-cancel-btn').addEventListener('click', () => {
-  editingId = null
-  document.getElementById('dex-title').value = ''
-  document.getElementById('dex-content').value = ''
-  document.getElementById('dex-save-btn').textContent = '＋ 新增'
-  document.getElementById('dex-cancel-btn').style.display = 'none'
-})
+document.getElementById('dex-cancel-btn').addEventListener('click', cancelEdit)
 
 document.getElementById('dex-save-btn').addEventListener('click', async () => {
   const title = document.getElementById('dex-title').value.trim()
@@ -69,15 +63,11 @@ document.getElementById('dex-save-btn').addEventListener('click', async () => {
   const content = document.getElementById('dex-content').value.trim()
   if (editingId !== null) {
     await db.notes.update(editingId, { title, content, updatedAt: Date.now() })
-    setStatus('ok', `已更新 #${editingId}`)
-    editingId = null
-    document.getElementById('dex-title').value = ''
-    document.getElementById('dex-content').value = ''
-    document.getElementById('dex-save-btn').textContent = '＋ 新增'
-    document.getElementById('dex-cancel-btn').style.display = 'none'
+    setStatus('dex', 'ok', `已更新 #${editingId}`)
+    cancelEdit()
   } else {
     const newId = await db.notes.add({ title, content, createdAt: Date.now() })
-    setStatus('ok', `已新增 #${newId}`)
+    setStatus('dex', 'ok', `已新增 #${newId}`)
     document.getElementById('dex-title').value = ''
     document.getElementById('dex-content').value = ''
   }
@@ -86,7 +76,7 @@ document.getElementById('dex-save-btn').addEventListener('click', async () => {
 
 db.open()
   .then(() => {
-    setStatus('ok', '已開啟 v1（共用 pwa-test-db）')
+    setStatus('dex', 'ok', '已開啟 v1（共用 pwa-test-db）')
     return renderList()
   })
-  .catch(err => setStatus('err', err.message || '開啟失敗'))
+  .catch(err => setStatus('dex', 'err', err.message || '開啟失敗'))
