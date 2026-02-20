@@ -188,6 +188,117 @@
       max-width: 480px;
       line-height: 1.6;
     }
+
+    /* IndexedDB card */
+    .idb-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .idb-form input, .idb-form textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      padding: 0.6rem 0.8rem;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: none;
+    }
+    .idb-form input:focus, .idb-form textarea:focus {
+      border-color: var(--accent);
+    }
+    .idb-form input::placeholder, .idb-form textarea::placeholder {
+      color: var(--muted);
+    }
+    .idb-btn-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .idb-btn-row button {
+      flex: 1;
+      margin-top: 0;
+      font-size: 0.85rem;
+      padding: 0.6rem;
+    }
+
+    .idb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .idb-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .idb-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .idb-item-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .idb-item-content {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .idb-item-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--border);
+      margin-top: 0.3rem;
+    }
+    .idb-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      flex-shrink: 0;
+    }
+    .idb-actions button {
+      width: auto;
+      margin-top: 0;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      border-radius: 6px;
+    }
+    .btn-edit {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .btn-edit:hover { background: var(--accent); color: var(--bg); }
+    .btn-del {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+    }
+    .btn-del:hover { background: var(--red); color: var(--bg); }
+    .idb-empty {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 1rem 0;
+    }
   </style>
 </head>
 <body>
@@ -246,6 +357,81 @@
 
   <button class="btn-primary" id="geo-btn">📍 取得目前位置</button>
   <button class="btn-secondary" id="watch-btn">👁 持續追蹤位置</button>
+</div>
+
+<!-- IndexedDB CRUD -->
+<div class="card">
+  <div class="card-title">// IndexedDB 增刪改查</div>
+
+  <div class="status-row">
+    <div class="dot" id="dot-idb"></div>
+    <span class="status-label">IndexedDB</span>
+    <span class="status-value" id="val-idb">初始化中…</span>
+  </div>
+
+  <div class="idb-form" style="margin-top:1rem;">
+    <input id="idb-title" type="text" placeholder="標題（必填）" maxlength="80" />
+    <textarea id="idb-content" rows="2" placeholder="內容（選填）"></textarea>
+    <div class="idb-btn-row">
+      <button class="btn-primary" id="idb-save-btn">＋ 新增</button>
+      <button class="btn-secondary" id="idb-cancel-btn" style="display:none;">✕ 取消編輯</button>
+    </div>
+  </div>
+
+  <div class="card-title" style="margin-bottom:0.5rem;">// 已儲存紀錄 <span id="idb-count" style="color:var(--accent)"></span></div>
+  <div class="idb-list" id="idb-list">
+    <div class="idb-empty">尚無資料</div>
+  </div>
+</div>
+
+<!-- JsStore CRUD -->
+<div class="card">
+  <div class="card-title">// JsStore 增刪改查</div>
+
+  <div class="status-row">
+    <div class="dot" id="dot-jss"></div>
+    <span class="status-label">JsStore</span>
+    <span class="status-value" id="val-jss">初始化中…</span>
+  </div>
+
+  <div class="idb-form" style="margin-top:1rem;">
+    <input id="jss-title" type="text" placeholder="標題（必填）" maxlength="80" />
+    <textarea id="jss-content" rows="2" placeholder="內容（選填）"></textarea>
+    <div class="idb-btn-row">
+      <button class="btn-primary" id="jss-save-btn">＋ 新增</button>
+      <button class="btn-secondary" id="jss-cancel-btn" style="display:none;">✕ 取消編輯</button>
+    </div>
+  </div>
+
+  <div class="card-title" style="margin-bottom:0.5rem;">// 已儲存紀錄 <span id="jss-count" style="color:var(--accent)"></span></div>
+  <div class="idb-list" id="jss-list">
+    <div class="idb-empty">尚無資料</div>
+  </div>
+</div>
+
+<!-- absurd-sql CRUD -->
+<div class="card">
+  <div class="card-title">// absurd-sql 增刪改查</div>
+
+  <div class="status-row">
+    <div class="dot" id="dot-aql"></div>
+    <span class="status-label">absurd-sql</span>
+    <span class="status-value" id="val-aql">初始化中…</span>
+  </div>
+
+  <div id="aql-form" class="idb-form" style="margin-top:1rem;">
+    <input id="aql-title" type="text" placeholder="標題（必填）" maxlength="80" />
+    <textarea id="aql-content" rows="2" placeholder="內容（選填）"></textarea>
+    <div class="idb-btn-row">
+      <button class="btn-primary" id="aql-save-btn">＋ 新增</button>
+      <button class="btn-secondary" id="aql-cancel-btn" style="display:none;">✕ 取消編輯</button>
+    </div>
+  </div>
+
+  <div class="card-title" style="margin-bottom:0.5rem;">// 已儲存紀錄 <span id="aql-count" style="color:var(--accent)"></span></div>
+  <div class="idb-list" id="aql-list">
+    <div class="idb-empty">尚無資料</div>
+  </div>
 </div>
 
 <p class="ios-hint">iOS Safari：點右下角「分享」→「加入主畫面」即可安裝</p>
@@ -351,6 +537,160 @@
     dot.className = `dot ${state}`;
     if (val) val.textContent = value;
   }
+
+  // ── IndexedDB CRUD ──
+  const IDB_NAME = 'pwa-test-db';
+  const IDB_VERSION = 1;
+  const STORE = 'notes';
+  let db = null;
+  let editingId = null;
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+      req.onupgradeneeded = e => {
+        const store = e.target.result.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('createdAt', 'createdAt');
+      };
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror = e => reject(e.target.error);
+    });
+  }
+
+  function idbAdd(title, content) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).add({ title, content, createdAt: Date.now() });
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = e => reject(e.target.error);
+    });
+  }
+
+  function idbUpdate(id, title, content) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const store = tx.objectStore(STORE);
+      const getReq = store.get(id);
+      getReq.onsuccess = () => {
+        const record = getReq.result;
+        record.title = title;
+        record.content = content;
+        record.updatedAt = Date.now();
+        const putReq = store.put(record);
+        putReq.onsuccess = () => resolve();
+        putReq.onerror = e => reject(e.target.error);
+      };
+      getReq.onerror = e => reject(e.target.error);
+    });
+  }
+
+  function idbDelete(id) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      const req = tx.objectStore(STORE).delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = e => reject(e.target.error);
+    });
+  }
+
+  function idbGetAll() {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = e => reject(e.target.error);
+    });
+  }
+
+  async function renderList() {
+    const records = await idbGetAll();
+    const list = document.getElementById('idb-list');
+    document.getElementById('idb-count').textContent = records.length ? `(${records.length})` : '';
+    if (records.length === 0) {
+      list.innerHTML = '<div class="idb-empty">尚無資料</div>';
+      return;
+    }
+    list.innerHTML = records.slice().reverse().map(r => `
+      <div class="idb-item">
+        <div class="idb-item-body">
+          <div class="idb-item-title">${escHtml(r.title)}</div>
+          ${r.content ? `<div class="idb-item-content">${escHtml(r.content)}</div>` : ''}
+          <div class="idb-item-id">#${r.id} · ${new Date(r.createdAt).toLocaleString('zh-TW')}</div>
+        </div>
+        <div class="idb-actions">
+          <button class="btn-edit" onclick="startEdit(${r.id})">編輯</button>
+          <button class="btn-del" onclick="deleteRecord(${r.id})">刪除</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function startEdit(id) {
+    idbGetAll().then(records => {
+      const r = records.find(x => x.id === id);
+      if (!r) return;
+      editingId = id;
+      document.getElementById('idb-title').value = r.title;
+      document.getElementById('idb-content').value = r.content || '';
+      document.getElementById('idb-save-btn').textContent = '✓ 儲存修改';
+      document.getElementById('idb-cancel-btn').style.display = '';
+      document.getElementById('idb-title').focus();
+    });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    document.getElementById('idb-title').value = '';
+    document.getElementById('idb-content').value = '';
+    document.getElementById('idb-save-btn').textContent = '＋ 新增';
+    document.getElementById('idb-cancel-btn').style.display = 'none';
+  }
+
+  async function deleteRecord(id) {
+    await idbDelete(id);
+    await renderList();
+    setStatus('idb', 'ok', `刪除 #${id}`);
+  }
+
+  document.getElementById('idb-cancel-btn').addEventListener('click', cancelEdit);
+
+  document.getElementById('idb-save-btn').addEventListener('click', async () => {
+    const title = document.getElementById('idb-title').value.trim();
+    if (!title) {
+      document.getElementById('idb-title').focus();
+      return;
+    }
+    const content = document.getElementById('idb-content').value.trim();
+    if (editingId !== null) {
+      await idbUpdate(editingId, title, content);
+      setStatus('idb', 'ok', `已更新 #${editingId}`);
+      cancelEdit();
+    } else {
+      const newId = await idbAdd(title, content);
+      setStatus('idb', 'ok', `已新增 #${newId}`);
+      document.getElementById('idb-title').value = '';
+      document.getElementById('idb-content').value = '';
+    }
+    await renderList();
+  });
+
+  // init
+  openDB()
+    .then(database => {
+      db = database;
+      setStatus('idb', 'ok', '已開啟 v1');
+      return renderList();
+    })
+    .catch(err => {
+      setStatus('idb', 'err', err.message || '開啟失敗');
+    });
 </script>
+
+<script type="module" src="/src/jsstore-card.js"></script>
+<script type="module" src="/src/absurd-card.js"></script>
 </body>
 </html>
