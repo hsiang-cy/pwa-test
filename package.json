@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "preview": "vite preview",
     "deploy": "vite build && wrangler pages deploy dist"
   },
   "keywords": [],
@@ -19,8 +20,6 @@
     "wrangler": "^4.67.0"
   },
   "dependencies": {
-    "@jlongster/sql.js": "^1.6.7",
-    "absurd-sql": "^0.0.54",
-    "jsstore": "^4.9.0"
+    "dexie": "^4.3.0"
   }
 }

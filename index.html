@@ -103,60 +103,31 @@
   </div>
 </div>
 
-<!-- JsStore CRUD -->
+<!-- Dexie CRUD -->
 <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-[480px]">
-  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// JsStore 增刪改查</div>
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// Dexie.js 增刪改查</div>
 
   <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
-    <div class="dot" id="dot-jss"></div>
-    <span class="flex-1 text-[0.95rem]">JsStore</span>
-    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-jss">初始化中…</span>
+    <div class="dot" id="dot-dex"></div>
+    <span class="flex-1 text-[0.95rem]">Dexie.js</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-dex">初始化中…</span>
   </div>
 
   <div class="flex flex-col gap-2.5 mt-4">
-    <input id="jss-title" type="text" placeholder="標題（必填）" maxlength="80"
+    <input id="dex-title" type="text" placeholder="標題（必填）" maxlength="80"
            class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 transition-colors" />
-    <textarea id="jss-content" rows="2" placeholder="內容（選填）"
+    <textarea id="dex-content" rows="2" placeholder="內容（選填）"
               class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 resize-none transition-colors"></textarea>
     <div class="flex gap-2">
-      <button class="btn-primary flex-1" id="jss-save-btn">＋ 新增</button>
-      <button class="btn-secondary flex-1" id="jss-cancel-btn" style="display:none;">✕ 取消編輯</button>
+      <button class="btn-primary flex-1" id="dex-save-btn">＋ 新增</button>
+      <button class="btn-secondary flex-1" id="dex-cancel-btn" style="display:none;">✕ 取消編輯</button>
     </div>
   </div>
 
   <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mt-4 mb-2">
-    // 已儲存紀錄 <span id="jss-count" class="text-sky-400 normal-case tracking-normal"></span>
+    // 已儲存紀錄 <span id="dex-count" class="text-sky-400 normal-case tracking-normal"></span>
   </div>
-  <div class="flex flex-col gap-2 max-h-72 overflow-y-auto" id="jss-list">
-    <div class="idb-empty">尚無資料</div>
-  </div>
-</div>
-
-<!-- absurd-sql CRUD -->
-<div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-[480px]">
-  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// absurd-sql 增刪改查</div>
-
-  <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
-    <div class="dot" id="dot-aql"></div>
-    <span class="flex-1 text-[0.95rem]">absurd-sql</span>
-    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-aql">初始化中…</span>
-  </div>
-
-  <div id="aql-form" class="flex flex-col gap-2.5 mt-4">
-    <input id="aql-title" type="text" placeholder="標題（必填）" maxlength="80"
-           class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 transition-colors" />
-    <textarea id="aql-content" rows="2" placeholder="內容（選填）"
-              class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 resize-none transition-colors"></textarea>
-    <div class="flex gap-2">
-      <button class="btn-primary flex-1" id="aql-save-btn">＋ 新增</button>
-      <button class="btn-secondary flex-1" id="aql-cancel-btn" style="display:none;">✕ 取消編輯</button>
-    </div>
-  </div>
-
-  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mt-4 mb-2">
-    // 已儲存紀錄 <span id="aql-count" class="text-sky-400 normal-case tracking-normal"></span>
-  </div>
-  <div class="flex flex-col gap-2 max-h-72 overflow-y-auto" id="aql-list">
+  <div class="flex flex-col gap-2 max-h-72 overflow-y-auto" id="dex-list">
     <div class="idb-empty">尚無資料</div>
   </div>
 </div>
@@ -412,7 +383,7 @@
         // Fire-and-forget: page unload will close connections, deletions will then complete
         dbs.forEach(({ name }) => indexedDB.deleteDatabase(name));
       } else {
-        ['pwa-test-db', 'pwa-jsstore-db'].forEach(name => indexedDB.deleteDatabase(name));
+        ['pwa-test-db'].forEach(name => indexedDB.deleteDatabase(name));
       }
       location.reload();
     } catch (e) {
@@ -441,7 +412,6 @@
   }
 </script>
 
-<script type="module" src="/src/jsstore-card.js"></script>
-<script type="module" src="/src/absurd-card.js"></script>
+<script type="module" src="/src/dexie-card.js"></script>
 </body>
 </html>
