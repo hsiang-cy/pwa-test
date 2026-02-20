@@ -10,431 +10,162 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="PWA測試" />
   <link rel="apple-touch-icon" href="https://placehold.co/192x192/0f172a/38bdf8?text=PWA" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --border: #334155;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --accent: #38bdf8;
-      --green: #34d399;
-      --red: #f87171;
-      --yellow: #fbbf24;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem 4rem;
-      gap: 1.5rem;
-    }
-
-    header {
-      text-align: center;
-      padding-top: 1rem;
-    }
-    header h1 {
-      font-size: clamp(1.8rem, 6vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--accent);
-    }
-    header p {
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      margin-top: 0.4rem;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      width: 100%;
-      max-width: 480px;
-    }
-
-    .card-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      margin-bottom: 1rem;
-    }
-
-    /* Status row */
-    .status-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .status-row:last-child { border-bottom: none; }
-
-    .dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      background: var(--muted);
-    }
-    .dot.ok { background: var(--green); box-shadow: 0 0 8px var(--green); }
-    .dot.err { background: var(--red); box-shadow: 0 0 8px var(--red); }
-    .dot.warn { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
-    .dot.pulse {
-      background: var(--accent);
-      animation: pulse 1.2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .status-label { flex: 1; font-size: 0.95rem; }
-    .status-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-align: right;
-    }
-
-    /* Button */
-    button {
-      width: 100%;
-      padding: 0.85rem;
-      border-radius: 10px;
-      border: none;
-      font-family: 'Syne', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      margin-top: 1rem;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0f172a;
-    }
-    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* Map box */
-    #map-box {
-      margin-top: 1rem;
-      border-radius: 10px;
-      overflow: hidden;
-      display: none;
-      border: 1px solid var(--border);
-    }
-    #map-box iframe {
-      width: 100%; height: 240px; border: none; display: block;
-    }
-
-    /* Coords */
-    #coords-display {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--accent);
-      margin-top: 0.75rem;
-      display: none;
-      line-height: 1.8;
-    }
-
-    /* Install banner */
-    #install-banner {
-      display: none;
-      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-      color: #0f172a;
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-      width: 100%;
-      max-width: 480px;
-      text-align: center;
-    }
-    #install-banner p { font-weight: 700; margin-bottom: 0.75rem; }
-    #install-banner button {
-      background: #0f172a;
-      color: var(--accent);
-      margin-top: 0;
-      font-size: 0.9rem;
-    }
-
-    .ios-hint {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-align: center;
-      max-width: 480px;
-      line-height: 1.6;
-    }
-
-    /* IndexedDB card */
-    .idb-form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin-bottom: 1rem;
-    }
-    .idb-form input, .idb-form textarea {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      padding: 0.6rem 0.8rem;
-      outline: none;
-      transition: border-color 0.15s;
-      resize: none;
-    }
-    .idb-form input:focus, .idb-form textarea:focus {
-      border-color: var(--accent);
-    }
-    .idb-form input::placeholder, .idb-form textarea::placeholder {
-      color: var(--muted);
-    }
-    .idb-btn-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-    .idb-btn-row button {
-      flex: 1;
-      margin-top: 0;
-      font-size: 0.85rem;
-      padding: 0.6rem;
-    }
-
-    .idb-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-height: 280px;
-      overflow-y: auto;
-    }
-    .idb-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.6rem 0.8rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-    .idb-item-body {
-      flex: 1;
-      min-width: 0;
-    }
-    .idb-item-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--accent);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .idb-item-content {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 0.2rem;
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-    .idb-item-id {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--border);
-      margin-top: 0.3rem;
-    }
-    .idb-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      flex-shrink: 0;
-    }
-    .idb-actions button {
-      width: auto;
-      margin-top: 0;
-      padding: 0.3rem 0.6rem;
-      font-size: 0.75rem;
-      border-radius: 6px;
-    }
-    .btn-edit {
-      background: transparent;
-      border: 1px solid var(--accent);
-      color: var(--accent);
-    }
-    .btn-edit:hover { background: var(--accent); color: var(--bg); }
-    .btn-del {
-      background: transparent;
-      border: 1px solid var(--red);
-      color: var(--red);
-    }
-    .btn-del:hover { background: var(--red); color: var(--bg); }
-    .idb-empty {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-align: center;
-      padding: 1rem 0;
-    }
-  </style>
+  <link rel="stylesheet" href="/src/style.css" />
 </head>
-<body>
+<body class="bg-slate-900 text-slate-200 font-syne min-h-dvh flex flex-col items-center px-4 pt-8 pb-16 gap-6">
 
-<header>
-  <h1>PWA 測試站</h1>
-  <p>// 安裝 + 定位 功能驗證</p>
+<header class="text-center pt-4">
+  <h1 class="text-[clamp(1.8rem,6vw,2.8rem)] font-extrabold tracking-[-0.03em] text-sky-400">PWA 測試站</h1>
+  <p class="text-slate-500 font-mono text-xs mt-1">// 安裝 + 定位 功能驗證</p>
 </header>
 
-<!-- PWA 安裝 Banner -->
-<div id="install-banner">
-  <p>📲 可以將此頁面安裝至桌面！</p>
-  <button id="install-btn">立即安裝</button>
+<!-- PWA Install Banner -->
+<div id="install-banner" style="display:none"
+     class="bg-gradient-to-br from-[#0ea5e9] to-sky-400 text-slate-900 rounded-2xl px-6 py-5 w-full max-w-[480px] text-center">
+  <p class="font-bold mb-3">📲 可以將此頁面安裝至桌面！</p>
+  <button id="install-btn"
+          class="w-full py-3 rounded-xl bg-slate-900 text-sky-400 font-syne font-bold text-sm cursor-pointer border-0">
+    立即安裝
+  </button>
 </div>
 
 <!-- PWA 狀態 -->
-<div class="card">
-  <div class="card-title">// PWA 環境狀態</div>
+<div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-[480px]">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// PWA 環境狀態</div>
 
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
     <div class="dot" id="dot-sw"></div>
-    <span class="status-label">Service Worker</span>
-    <span class="status-value" id="val-sw">檢查中…</span>
+    <span class="flex-1 text-[0.95rem]">Service Worker</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-sw">檢查中…</span>
   </div>
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
     <div class="dot" id="dot-manifest"></div>
-    <span class="status-label">Manifest</span>
-    <span class="status-value" id="val-manifest">檢查中…</span>
+    <span class="flex-1 text-[0.95rem]">Manifest</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-manifest">檢查中…</span>
   </div>
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
     <div class="dot" id="dot-https"></div>
-    <span class="status-label">HTTPS / localhost</span>
-    <span class="status-value" id="val-https">—</span>
+    <span class="flex-1 text-[0.95rem]">HTTPS / localhost</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-https">—</span>
   </div>
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5">
     <div class="dot" id="dot-installed"></div>
-    <span class="status-label">安裝狀態</span>
-    <span class="status-value" id="val-installed">—</span>
+    <span class="flex-1 text-[0.95rem]">安裝狀態</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-installed">—</span>
   </div>
 </div>
 
 <!-- 定位測試 -->
-<div class="card">
-  <div class="card-title">// 定位功能測試</div>
+<div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-[480px]">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// 定位功能測試</div>
 
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5">
     <div class="dot" id="dot-geo"></div>
-    <span class="status-label">Geolocation API</span>
-    <span class="status-value" id="val-geo">尚未請求</span>
+    <span class="flex-1 text-[0.95rem]">Geolocation API</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-geo">尚未請求</span>
   </div>
 
-  <div id="coords-display" id="coords"></div>
-  <div id="map-box">
-    <iframe id="map-frame" allowfullscreen></iframe>
+  <div id="coords-display" style="display:none" class="font-mono text-sm text-sky-400 mt-3 leading-[1.8]"></div>
+  <div id="map-box" style="display:none" class="mt-4 rounded-xl overflow-hidden border border-slate-700">
+    <iframe id="map-frame" allowfullscreen class="w-full h-60 border-0 block"></iframe>
   </div>
 
-  <button class="btn-primary" id="geo-btn">📍 取得目前位置</button>
-  <button class="btn-secondary" id="watch-btn">👁 持續追蹤位置</button>
+  <button class="btn-primary w-full mt-4" id="geo-btn">📍 取得目前位置</button>
+  <button class="btn-secondary w-full mt-2" id="watch-btn">👁 持續追蹤位置</button>
 </div>
 
 <!-- IndexedDB CRUD -->
-<div class="card">
-  <div class="card-title">// IndexedDB 增刪改查</div>
+<div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-[480px]">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// IndexedDB 增刪改查</div>
 
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
     <div class="dot" id="dot-idb"></div>
-    <span class="status-label">IndexedDB</span>
-    <span class="status-value" id="val-idb">初始化中…</span>
+    <span class="flex-1 text-[0.95rem]">IndexedDB</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-idb">初始化中…</span>
   </div>
 
-  <div class="idb-form" style="margin-top:1rem;">
-    <input id="idb-title" type="text" placeholder="標題（必填）" maxlength="80" />
-    <textarea id="idb-content" rows="2" placeholder="內容（選填）"></textarea>
-    <div class="idb-btn-row">
-      <button class="btn-primary" id="idb-save-btn">＋ 新增</button>
-      <button class="btn-secondary" id="idb-cancel-btn" style="display:none;">✕ 取消編輯</button>
+  <div class="flex flex-col gap-2.5 mt-4">
+    <input id="idb-title" type="text" placeholder="標題（必填）" maxlength="80"
+           class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 transition-colors" />
+    <textarea id="idb-content" rows="2" placeholder="內容（選填）"
+              class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 resize-none transition-colors"></textarea>
+    <div class="flex gap-2">
+      <button class="btn-primary flex-1" id="idb-save-btn">＋ 新增</button>
+      <button class="btn-secondary flex-1" id="idb-cancel-btn" style="display:none;">✕ 取消編輯</button>
     </div>
   </div>
 
-  <div class="card-title" style="margin-bottom:0.5rem;">// 已儲存紀錄 <span id="idb-count" style="color:var(--accent)"></span></div>
-  <div class="idb-list" id="idb-list">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mt-4 mb-2">
+    // 已儲存紀錄 <span id="idb-count" class="text-sky-400 normal-case tracking-normal"></span>
+  </div>
+  <div class="flex flex-col gap-2 max-h-72 overflow-y-auto" id="idb-list">
     <div class="idb-empty">尚無資料</div>
   </div>
 </div>
 
 <!-- JsStore CRUD -->
-<div class="card">
-  <div class="card-title">// JsStore 增刪改查</div>
+<div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-[480px]">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// JsStore 增刪改查</div>
 
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
     <div class="dot" id="dot-jss"></div>
-    <span class="status-label">JsStore</span>
-    <span class="status-value" id="val-jss">初始化中…</span>
+    <span class="flex-1 text-[0.95rem]">JsStore</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-jss">初始化中…</span>
   </div>
 
-  <div class="idb-form" style="margin-top:1rem;">
-    <input id="jss-title" type="text" placeholder="標題（必填）" maxlength="80" />
-    <textarea id="jss-content" rows="2" placeholder="內容（選填）"></textarea>
-    <div class="idb-btn-row">
-      <button class="btn-primary" id="jss-save-btn">＋ 新增</button>
-      <button class="btn-secondary" id="jss-cancel-btn" style="display:none;">✕ 取消編輯</button>
+  <div class="flex flex-col gap-2.5 mt-4">
+    <input id="jss-title" type="text" placeholder="標題（必填）" maxlength="80"
+           class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 transition-colors" />
+    <textarea id="jss-content" rows="2" placeholder="內容（選填）"
+              class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 resize-none transition-colors"></textarea>
+    <div class="flex gap-2">
+      <button class="btn-primary flex-1" id="jss-save-btn">＋ 新增</button>
+      <button class="btn-secondary flex-1" id="jss-cancel-btn" style="display:none;">✕ 取消編輯</button>
     </div>
   </div>
 
-  <div class="card-title" style="margin-bottom:0.5rem;">// 已儲存紀錄 <span id="jss-count" style="color:var(--accent)"></span></div>
-  <div class="idb-list" id="jss-list">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mt-4 mb-2">
+    // 已儲存紀錄 <span id="jss-count" class="text-sky-400 normal-case tracking-normal"></span>
+  </div>
+  <div class="flex flex-col gap-2 max-h-72 overflow-y-auto" id="jss-list">
     <div class="idb-empty">尚無資料</div>
   </div>
 </div>
 
 <!-- absurd-sql CRUD -->
-<div class="card">
-  <div class="card-title">// absurd-sql 增刪改查</div>
+<div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-[480px]">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mb-4">// absurd-sql 增刪改查</div>
 
-  <div class="status-row">
+  <div class="flex items-center gap-3 py-2.5 border-b border-slate-700">
     <div class="dot" id="dot-aql"></div>
-    <span class="status-label">absurd-sql</span>
-    <span class="status-value" id="val-aql">初始化中…</span>
+    <span class="flex-1 text-[0.95rem]">absurd-sql</span>
+    <span class="font-mono text-[0.78rem] text-slate-500 text-right" id="val-aql">初始化中…</span>
   </div>
 
-  <div id="aql-form" class="idb-form" style="margin-top:1rem;">
-    <input id="aql-title" type="text" placeholder="標題（必填）" maxlength="80" />
-    <textarea id="aql-content" rows="2" placeholder="內容（選填）"></textarea>
-    <div class="idb-btn-row">
-      <button class="btn-primary" id="aql-save-btn">＋ 新增</button>
-      <button class="btn-secondary" id="aql-cancel-btn" style="display:none;">✕ 取消編輯</button>
+  <div id="aql-form" class="flex flex-col gap-2.5 mt-4">
+    <input id="aql-title" type="text" placeholder="標題（必填）" maxlength="80"
+           class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 transition-colors" />
+    <textarea id="aql-content" rows="2" placeholder="內容（選填）"
+              class="bg-slate-900 border border-slate-700 rounded-lg text-slate-200 font-mono text-sm py-2.5 px-3 outline-none focus:border-sky-400 placeholder:text-slate-500 resize-none transition-colors"></textarea>
+    <div class="flex gap-2">
+      <button class="btn-primary flex-1" id="aql-save-btn">＋ 新增</button>
+      <button class="btn-secondary flex-1" id="aql-cancel-btn" style="display:none;">✕ 取消編輯</button>
     </div>
   </div>
 
-  <div class="card-title" style="margin-bottom:0.5rem;">// 已儲存紀錄 <span id="aql-count" style="color:var(--accent)"></span></div>
-  <div class="idb-list" id="aql-list">
+  <div class="text-[0.7rem] uppercase tracking-[0.15em] text-slate-500 font-mono mt-4 mb-2">
+    // 已儲存紀錄 <span id="aql-count" class="text-sky-400 normal-case tracking-normal"></span>
+  </div>
+  <div class="flex flex-col gap-2 max-h-72 overflow-y-auto" id="aql-list">
     <div class="idb-empty">尚無資料</div>
   </div>
 </div>
 
-<p class="ios-hint">iOS Safari：點右下角「分享」→「加入主畫面」即可安裝</p>
+<p class="font-mono text-xs text-slate-500 text-center max-w-[480px] leading-relaxed">
+  iOS Safari：點右下角「分享」→「加入主畫面」即可安裝
+</p>
+
+<button class="btn-danger w-full max-w-[480px]" id="clear-all-btn">🗑 清空所有 IndexedDB 資料</button>
 
 <script>
   // ── HTTPS check ──
@@ -528,14 +259,6 @@
   function geoErr(err) {
     const msgs = { 1: '拒絕授權', 2: '位置無法取得', 3: '逾時' };
     setStatus('geo', 'err', msgs[err.code] || '未知錯誤');
-  }
-
-  // ── Helper ──
-  function setStatus(key, state, value) {
-    const dot = document.getElementById(`dot-${key}`);
-    const val = document.getElementById(`val-${key}`);
-    dot.className = `dot ${state}`;
-    if (val) val.textContent = value;
   }
 
   // ── IndexedDB CRUD ──
@@ -678,7 +401,27 @@
     await renderList();
   });
 
-  // init
+  // ── Clear all IndexedDB ──
+  document.getElementById('clear-all-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('clear-all-btn');
+    btn.disabled = true;
+    btn.textContent = '清空中…';
+    try {
+      if ('databases' in indexedDB) {
+        const dbs = await indexedDB.databases();
+        // Fire-and-forget: page unload will close connections, deletions will then complete
+        dbs.forEach(({ name }) => indexedDB.deleteDatabase(name));
+      } else {
+        ['pwa-test-db', 'pwa-jsstore-db'].forEach(name => indexedDB.deleteDatabase(name));
+      }
+      location.reload();
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = '🗑 清空所有 IndexedDB 資料';
+    }
+  });
+
+  // ── init IDB ──
   openDB()
     .then(database => {
       db = database;
@@ -688,6 +431,14 @@
     .catch(err => {
       setStatus('idb', 'err', err.message || '開啟失敗');
     });
+
+  // ── Helper ──
+  function setStatus(key, state, value) {
+    const dot = document.getElementById(`dot-${key}`);
+    const val = document.getElementById(`val-${key}`);
+    dot.className = `dot ${state}`;
+    if (val) val.textContent = value;
+  }
 </script>
 
 <script type="module" src="/src/jsstore-card.js"></script>

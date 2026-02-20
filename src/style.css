@@ -1,0 +1,86 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@theme {
+  --font-syne: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ── Dot status indicators (class swapped by JS: dot.className = 'dot ok') ── */
+@layer components {
+  .dot {
+    @apply size-2.5 rounded-full shrink-0 bg-slate-500;
+  }
+  .dot.ok {
+    @apply bg-emerald-400;
+    box-shadow: 0 0 8px #34d399;
+  }
+  .dot.err {
+    @apply bg-red-400;
+    box-shadow: 0 0 8px #f87171;
+  }
+  .dot.warn {
+    @apply bg-yellow-400;
+    box-shadow: 0 0 8px #fbbf24;
+  }
+  .dot.pulse {
+    @apply bg-sky-400;
+    animation: dot-blink 1.2s infinite;
+  }
+
+  /* ── Shared buttons ── */
+  .btn-primary {
+    @apply py-3.5 rounded-xl border-0 font-syne text-base font-bold cursor-pointer
+           transition-all duration-150 bg-sky-400 text-slate-900
+           hover:brightness-110 hover:-translate-y-px active:translate-y-0
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0;
+  }
+  .btn-secondary {
+    @apply py-3.5 rounded-xl border border-slate-700 text-slate-200 bg-transparent
+           font-syne text-base font-bold cursor-pointer transition-all duration-150
+           hover:border-sky-400 hover:text-sky-400;
+  }
+  .btn-danger {
+    @apply py-3.5 rounded-xl border border-red-400 text-red-400 bg-transparent
+           font-syne text-base font-bold cursor-pointer transition-all duration-150
+           hover:bg-red-400 hover:text-slate-900 active:opacity-80;
+  }
+
+  /* ── IDB list items — generated via innerHTML in JS ── */
+  .idb-empty {
+    @apply font-mono text-sm text-slate-500 text-center py-4;
+  }
+  .idb-item {
+    @apply bg-slate-900 border border-slate-700 rounded-lg p-3 flex items-start gap-3;
+  }
+  .idb-item-body {
+    @apply flex-1 min-w-0;
+  }
+  .idb-item-title {
+    @apply text-sm font-bold text-sky-400 truncate;
+  }
+  .idb-item-content {
+    @apply font-mono text-xs text-slate-500 mt-0.5 whitespace-pre-wrap break-all;
+  }
+  .idb-item-id {
+    @apply font-mono text-[0.65rem] text-slate-700 mt-1;
+  }
+  .idb-actions {
+    @apply flex flex-col gap-1 shrink-0;
+  }
+  .idb-actions button {
+    @apply w-auto mt-0 px-2.5 py-1 text-xs rounded-md cursor-pointer border
+           font-syne font-bold transition-colors;
+  }
+  .btn-edit {
+    @apply border-sky-400 text-sky-400 bg-transparent hover:bg-sky-400 hover:text-slate-900;
+  }
+  .btn-del {
+    @apply border-red-400 text-red-400 bg-transparent hover:bg-red-400 hover:text-slate-900;
+  }
+}
+
+@keyframes dot-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
